@@ -1,0 +1,11 @@
+# configs/email.yaml
+
+email:
+  smtp_server: "smtp.gmail.com"
+  # smtp port: 587 for SMTP + STARTTLS most common 
+  smtp_port: 587
+  # Use environment variables for email address, password
+  # - load automatically in load_config 
+  sender_email: "${SENDER_EMAIL}"
+  sender_password: "${EMAIL_PASSWORD}"
+  recipient_email: "${RECIPIENT_EMAIL}"
