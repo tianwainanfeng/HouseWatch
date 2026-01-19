@@ -9,6 +9,7 @@ from typing import List
 from bs4 import BeautifulSoup
 
 from housewatch.models.house import House
+from housewatch.storage.json_storage import HouseStorage
 
 logger = logging.getLogger(__name__)
 
@@ -97,9 +98,10 @@ class RedfinScraper:
 
     BASE_URL = "https://www.redfin.com/stingray/api/gis"
 
-    def __init__(self, config):
+    def __init__(self, config, storage: HouseStorage):
         # API Core Parameters
         self.config = config
+        self.storage = storage
         self.timeout = config.app.get("timeout", 10)
 
         self.headers = {
@@ -122,13 +124,15 @@ class RedfinScraper:
         basic_houses = self._parse_search(raw_data)
 
         logger.info(f"Redfin fetch houses: {len(basic_houses)}")
-            
+        
+        new_houses = [h for h in basic_houses if self.storage.is_new(h)]
+
         full_houses = []
         count = 0
-        for house in basic_houses:
+        for house in new_houses:
             count += 1
             # Visit the detail page to get Schools and HOA
-            logger.info(f"Fetching deep details for ({count}/{len(basic_houses)}): "
+            logger.info(f"Fetching deep details for ({count}/{len(new_houses)}): "
                         f"{house.address}, {house.city}, {house.state} {house.zip_code}")
 
             # Here only for schools
@@ -142,6 +146,12 @@ class RedfinScraper:
 
             full_houses.append(house)
             time.sleep(1) # Avoid gettinb blocked
+
+        # Mark all new_houses as "seen"
+
+        self.storage.make_multiple_as_seen(new_houses)
+        self.storage.save_seen()
+
 
         return full_houses
     
@@ -246,7 +256,7 @@ class RedfinScraper:
             # No school information is available at this stage            
             try:
                 house = House(
-                    listing_id=h.get("listingId"),
+                    listing_id=str(h.get("listingId", "")),
                     property_type=property_type,
                     price=price,
                     year_built=year_built,
@@ -260,8 +270,12 @@ class RedfinScraper:
                     state=state,
                     zip_code=h.get("zip"),
                     url=f"https://www.redfin.com{h.get('url')}"
-                )            
-                results.append(house)
+                )
+                # Check if house is new
+                if self.storage.is_new(house):
+                    results.append(house)
+                else:
+                    continue
                 
             except Exception:
                 logger.exception(

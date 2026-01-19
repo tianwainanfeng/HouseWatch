@@ -26,8 +26,10 @@ class HouseStorage:
                 with open(self.seen_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
                     self.seen_houses = data.get("seen_houses", {})
-            except (json.JSONDecodeError, IOError):
-                self.seen_houses = {}
+                
+            except (json.JSONDecodeError, IOError) as e:
+                print(f"Warning: could not read {self.seen_path}")
+                raise e
     
 
     def save_seen(self) -> None:
@@ -42,20 +44,22 @@ class HouseStorage:
 
     def is_new(self, house: House) -> bool:
         """Check if house hasn't seen before"""
-        return house.listing_id not in self.seen_houses
+        if not house.listing_id:
+            return False
+        return str(house.listing_id) not in self.seen_houses
     
 
     def mark_as_seen(self, house: House) -> None:
         """Mark a house as seen and save"""
-        self.seen_houses[house.listing_id] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
-        self.save_seen()
-    
+        if house.listing_id and self.is_new(house):
+            self.seen_houses[str(house.listing_id)] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
+            
 
     def make_multiple_as_seen(self, houses: List[House]) -> None:
         """Mark multiple houses as seen at once"""
         for house in houses:
-            self.seen_houses[house.listing_id] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
-        self.save_seen()
+            if house.listing_id and self.is_new(house):
+                self.seen_houses[str(house.listing_id)] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
     
 
     def save_matched(self, houses: List[House]) -> None:

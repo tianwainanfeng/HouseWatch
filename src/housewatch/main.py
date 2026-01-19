@@ -44,46 +44,27 @@ def main():
         # Initialize components
         seen_path = root_dir / "data" / "seen_houses.json"
         matched_path = root_dir / "data" / "matched_houses.json"
+        #  If you wanted to start with new storage files
+        #  for p in [seen_path, matched_path]:
+        #     if p.exists():
+        #         p.unlink()
         #logger.info(f"\n\tSeen path: {seen_path}")
         #logger.info(f"\n\tMatched path: {matched_path}")
 
-        scraper = RedfinScraper(config)
+        # ==== This part has been modified to move filtration and storage in redfin_scraper ====
+
         storage = HouseStorage(str(seen_path), str(matched_path))
+        scraper = RedfinScraper(config, storage)
         notifier = EmailNotifier(config.email)
             
-        # Fech from Redfin
-        all_houses = scraper.fetch()
-
-        # Filter out houses that have been seen (Deduplication)
-        new_listings = [h for h in all_houses if storage.is_new(h)]        
-        logger.info(f"Processing {len(new_listings)} brank new listings (skipping {len(all_houses)-len(new_listings)} already seen)")
-
+        # Fetch new matched from Redfin
+        new_listings = scraper.fetch()
+        logger.info(f"Found {len(new_listings)} NEW matches!")    
+        
         if not new_listings:
             logger.info("No new houses since last check.")
             return
-
-        """
-        # This part is not needed as the filtration is applied in redfin_scraper (fast!).
-        # However, seen_houses is not for all seen houses now, it is only for seen matched houses. (ok, for now)
-
-        # Apply criteria
-        matched_houses = filter_houses(new_listings, config)
-        logger.info(f"✓ {len(matched_houses)} houses match all criteria")
-
-        if matched_houses:
-            logger.info(f"Found {len(matched_houses)} NEW matches!")
-            storage.save_matched(matched_houses)
-
-            # Send notification
-            if notifier.send_notification(matched_houses):
-                logger.info("Email notification sent")
-            else:
-                logger.info("Failed to send email notification")
-        else:
-            logger.info("No matches found among new listings")
-        """
-        
-        logger.info(f"Found {len(new_listings)} NEW matches!")
+               
         storage.save_matched(new_listings)
 
         # Send notification
