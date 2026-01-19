@@ -8,4 +8,6 @@ email:
   # - load automatically in load_config 
   sender_email: "${SENDER_EMAIL}"
   sender_password: "${EMAIL_PASSWORD}"
-  recipient_email: "${RECIPIENT_EMAIL}"
+  recipient_emails:
+    - "${RECIPIENT_EMAIL_1}"
+    - "${RECIPIENT_EMAIL_2}"

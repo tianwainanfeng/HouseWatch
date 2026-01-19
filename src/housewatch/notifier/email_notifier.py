@@ -17,7 +17,7 @@ class EmailNotifier:
         self.smtp_port = self.config.get("smtp_port", 587)
         self.sender_email = self.config.get("sender_email", "")
         self.sender_password = self.config.get("sender_password", "")
-        self.recipient_email = self.config.get("recipient_email", "")
+        self.recipient_emails = self.config.get("recipient_emails", [])
     
 
     def send_notification(self, houses: List[House]) -> bool:
@@ -35,8 +35,11 @@ class EmailNotifier:
             msg = MIMEMultipart('alternative')
             msg['Subject'] = f"Found {len(houses)} new houses matches!"
             msg['From'] = self.sender_email
-            msg['To'] = self.recipient_email
 
+            # Join multiple recipients with comma
+            recipients = self.recipient_emails if isinstance(self.recipient_emails, list) else [self.recipient_emails]
+            msg['To'] = ", ".join(recipients)
+            
             # Create HTML content
             html_content = self._create_html_content(houses)
             msg.attach(MIMEText(html_content, 'html', 'utf-8'))
@@ -48,7 +51,7 @@ class EmailNotifier:
                 server.login(self.sender_email, self.sender_password)
                 server.send_message(msg)
             
-            print(f"✅ Email sent with {len(houses)} founded houses!")
+            print(f"✅ Email sent to {len(recipients)} recipients with {len(houses)} founded houses!")
             return True
         
         except Exception as e:
