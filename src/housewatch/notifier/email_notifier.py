@@ -86,7 +86,12 @@ class EmailNotifier:
 
             html += f"""
             <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
-                <h3 styl"margin-top: 0; color: #e67e22">#{i}: {house.address}, {house.city}, {house.state} {house.zip_code}</h3>
+                <h3 style="margin-top: 0; color: #e67e22">#{i}:
+                    <a href="{house.url}" target="_blank" style="color: #1a73e8; text-decoration: underline;">
+                {house.address}, {house.city}, {house.state} {house.zip_code}
+                    </a>
+                </h3>
+                
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr><td style="width: 120px;"><strong>Price:</strong></td><td>{house.formatted_price}</td></tr>
                     <tr><td><strong>Year Built:</strong></td><td>{house.year_built or 'N/A'}</td></tr>
