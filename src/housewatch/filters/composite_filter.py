@@ -19,10 +19,10 @@ def filter_houses(houses: List[House], config: dict) -> List[House]:
     for house in houses:
         if not filter_by_property_criteria(house, config):
             continue
-
+        
         if not filter_by_schools(house, required_schools):
             continue
-
+        
         filtered.append(house)
     
     return filtered

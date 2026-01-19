@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import List, Set
+from typing import List
 from datetime import datetime
 from housewatch.models.house import House
 
@@ -15,7 +15,7 @@ class HouseStorage:
         self.seen_path = Path(seen_path)
         self.matched_path = Path(matched_path)
         self.seen_path.parent.mkdir(parents=True, exist_ok=True)
-        self.seen_ids: Set[str] = set()
+        self.seen_houses: dict[str, str] = {} # listing_id -> address
         self.load_seen()
     
 
@@ -25,36 +25,36 @@ class HouseStorage:
             try:
                 with open(self.seen_path, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-                    self.seen_ids = set(data.get("seen_ids", []))
+                    self.seen_houses = data.get("seen_houses", {})
             except (json.JSONDecodeError, IOError):
-                self.seen_ids = set()
+                self.seen_houses = {}
     
 
     def save_seen(self) -> None:
-        """Save seen house IDs to file"""
+        """Save seen houses to file"""
         data = {
-            "seen_ids": list(self.seen_ids),
+            "seen_houses": self.seen_houses,
             "last_updated": datetime.now().isoformat()
         }
         with open(self.seen_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2)
+            json.dump(data, f, indent=2, ensure_ascii=False)
     
 
     def is_new(self, house: House) -> bool:
         """Check if house hasn't seen before"""
-        return house.listing_id not in self.seen_ids
+        return house.listing_id not in self.seen_houses
     
 
     def mark_as_seen(self, house: House) -> None:
         """Mark a house as seen and save"""
-        self.seen_ids.add(house.listing_id)
+        self.seen_houses[house.listing_id] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
         self.save_seen()
     
 
     def make_multiple_as_seen(self, houses: List[House]) -> None:
         """Mark multiple houses as seen at once"""
         for house in houses:
-            self.seen_ids.add(house.listing_id)
+            self.seen_houses[house.listing_id] = f"{house.address}, {house.city}, {house.state} {house.zip_code}"
         self.save_seen()
     
 

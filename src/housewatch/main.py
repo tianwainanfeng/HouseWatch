@@ -64,6 +64,8 @@ def main():
 
         """
         # This part is not needed as the filtration is applied in redfin_scraper (fast!).
+        # However, seen_houses is not for all seen houses now, it is only for seen matched houses. (ok, for now)
+
         # Apply criteria
         matched_houses = filter_houses(new_listings, config)
         logger.info(f"✓ {len(matched_houses)} houses match all criteria")

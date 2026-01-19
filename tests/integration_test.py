@@ -36,7 +36,9 @@ def run_test():
         print(f"\nHere's the criteria:")
         print(f"    - Max price: ${property_criteria.get("max_price", 0):,}")
         print(f"    - Min Year: {property_criteria.get("min_year_built", 1980)}")
-        print(f"    - Schools: {', '.join(school_criteria.get("schools", []))}")
+        for level, schools in school_criteria.items():
+            print(f"    - {level.capitalize()} schools:")
+            print(f"        - {', '.join(schools)}")
 
         # Initialize storage file
         test_seen_path = root_dir / "data" / "test_seen_houses.json"
@@ -60,7 +62,7 @@ def run_test():
 
         # Apply filters
         filtered = filter_houses(new_houses, config)
-
+        
         print(f"\nResults:")
         print(f"    - Matching houses:  {len(filtered)}")
 
@@ -69,7 +71,9 @@ def run_test():
             print(f"    Address: {house.address}")
             print(f"    Price: {house.price:,}")
             print(f"    Year Built: {house.year_built}")
-            print(f"    Schools: {house.schools}...")
+            print(f"    Schools:")
+            for level, schools in house.schools.items():
+                   print(f"     {level.capitalize()}: {', '.join(schools) if schools else 'N/A'}")
         
         # Send email notification
         notifier = EmailNotifier(config.email)

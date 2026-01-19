@@ -23,11 +23,11 @@ def get_mock_houses() -> List[House]:
             baths=2.5,
             sqft=2200,
             url="https://www.redfin.com/mock-001",
-            schools=[
-                "Highlands Elementary School",
-                "Kennedy Junior High School",
-                "Naperville North High School"
-            ],
+            schools={
+                "elementary": ["Highlands Elementary School"],
+                "middle": ["Kennedy Junior High School"],
+                "high": ["Naperville North High School"]
+            },
             listed_date=datetime.now()
         ),
         House(
@@ -40,11 +40,11 @@ def get_mock_houses() -> List[House]:
             year_built=1985,
             property_type="Single-Family",
             hoa_fee=0.0,
-            schools=[
-                "Different Elementary School",
-                "Kennedy Junior High School",
-                "Naperville North High School"
-            ],
+            schools={
+                "elementary": ["Different Elementary School"],
+                "middle": ["Kennedy Junior High School"],
+                "high": ["Naperville North High School"]
+            },
             listed_date=datetime.now()
         ),
         House(
@@ -57,11 +57,11 @@ def get_mock_houses() -> List[House]:
             year_built=1999,
             property_type="Townhouse",
             hoa_fee=150.0,
-            schools=[
-                "Different Elementary School",
-                "Kennedy Junior High School",
-                "Naperville North High School"
-            ],
+            schools={
+                "elementary": ["Different Elementary School"],
+                "middle": ["Kennedy Junior High School"],
+                "high": ["Naperville North High School"]
+            },
             listed_date=datetime.now()
         )
     ]

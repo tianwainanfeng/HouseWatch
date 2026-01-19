@@ -41,7 +41,6 @@ class House:
                 "high": []
             }
     
-
     @property
     def formatted_price(self) -> str:
         """Return price as formatted string: $XXX,XXX"""

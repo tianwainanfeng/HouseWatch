@@ -14,8 +14,11 @@ def filter_by_schools(house: House, school_config: Dict[str, Any]) -> bool:
     if not house.schools:
         return False
     
-    house_school_lower = [s.lower().strip() for s in house.schools]
-
+    house_school_lower = {
+        level: [s.lower().strip() for s in schools]
+        for level, schools in house.schools.items()
+    }
+    
     # Track matches for each tier
     elementary_matched = False
     middle_matched = False
@@ -33,7 +36,7 @@ def filter_by_schools(house: House, school_config: Dict[str, Any]) -> bool:
         elementary_matched = any(
             re.search(_create_flexible_pattern(elem), school, re.IGNORECASE)
             for elem in elementary_schools
-            for school in house_school_lower
+            for school in house_school_lower["elementary"]
         )
     
     # Check middle schools
@@ -43,7 +46,7 @@ def filter_by_schools(house: House, school_config: Dict[str, Any]) -> bool:
         middle_matched = any(
             re.search(_create_flexible_pattern(mid), school, re.IGNORECASE)
             for mid in middle_schools
-            for school in house_school_lower
+            for school in house_school_lower["middle"]
         )
     
     # Check high schools
@@ -53,7 +56,7 @@ def filter_by_schools(house: House, school_config: Dict[str, Any]) -> bool:
         high_matched = any(
             re.search(_create_flexible_pattern(high), school, re.IGNORECASE)
             for high in hihg_schools
-            for school in house_school_lower
+            for school in house_school_lower["high"]
         )
     
     return elementary_matched and middle_matched and high_matched
