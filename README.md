@@ -18,10 +18,12 @@ The project is designed to run locally or automatically (e.g., via Docker + cron
 
 ## Project Structure
 
-configs/ # Configuration files (YAML)
-data/ # Runtime data (not tracked by git)
-src/housewatch/ # Application source code
-tests/ # Tests
+HouseWatch has a simple and intuitive structure:
+
+- **configs/** – YAML files for app, criteria, email, etc.
+- **data/** – Stores runtime outputs (seen/matched houses), ignored by git
+- **src/housewatch/** – Main Python source code
+- **tests/** – Integration and regression tests
 
 ---
 
