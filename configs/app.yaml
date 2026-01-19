@@ -1,0 +1,8 @@
+# configs/app.yaml
+
+app:
+  timeout: 15
+  redfin:
+    # maximum/limit number of results returned in a single request, i.e., <= 350
+    num_homes: 350
+  

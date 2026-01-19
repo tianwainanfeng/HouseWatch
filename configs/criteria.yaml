@@ -1,0 +1,51 @@
+# configs/criteria.yaml
+criteria:
+  metadata:
+    name: "Suburban Family Search"
+
+  active_modules:
+    - property
+    - location
+    #- schools # not from API but html page
+
+  property:
+    type: "Single Family"
+    status: 1 
+    # UI property type: 1 - Single-Family, 2 - Condo, 3 - Townhouse
+    uipt: "1"
+    max_price: 1000000
+    min_price: 500000
+    # max hoa fee per month
+    hoa_fee: 50.0
+    # Listing status: 1 - for sale (active), 2 - pending, 3 - sold 
+    min_year_built: 1980
+    min_beds: 3
+    min_baths: 2.5
+
+  schools:
+    elementary: 
+      - "Highlands Elementary School"
+      - "Ranch View Elementary School"
+      - "Meadow Glens Elementary School"
+      - "Arlene Welch Elementary School"
+    middle:
+      - "Kennedy Junior High School"
+      - "Scullen Middle School"
+    high:
+      - "Naperville North High School"
+      - "Naperville Central High School"
+      - "Neuqua Valley High School"
+  
+  location:
+    # Use region
+    state: "IL"
+    region_ids:
+      - "29501" # "Naperville"
+      - "11188" # "Lisle"
+      - "29522" # "Woodridge"
+    region_type: 6 # 6 for city
+    # Or use coordinates
+    #latitude: 41.75
+    #longitude: -88.15
+    #lat_delta: 0.02
+    #long_delta: 0.02
