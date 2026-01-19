@@ -1,7 +1,7 @@
 # src/housewatch/modesl/house.py
 
-from dataclasses import dataclass
-from typing import Optional, List
+from dataclasses import dataclass, field
+from typing import Optional, List, Dict
 from datetime import datetime
 
 
@@ -22,7 +22,7 @@ class House:
     sqft: Optional[int] = None
     lot_size: Optional[float] = None
     url: str = ""
-    schools: List[str] = None
+    schools: Dict[str, List[str]] = field(default_factory=dict)
     listed_date: Optional[datetime] = None
     last_update: Optional[datetime] = None
 
@@ -34,8 +34,12 @@ class House:
         standard __init__, and after that it automatically looks for and calls
         __post_init__.
         """
-        if self.schools is None:
-            self.schools = []
+        if not self.schools:
+            self.schools = {
+                "elementary": [],
+                "middle": [],
+                "high": []
+            }
     
 
     @property

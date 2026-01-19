@@ -16,7 +16,7 @@ class ProjectConfig:
 
         # Load app.yaml
         app_config = load_config("configs/app.yaml")
-        self.app = app_config.get("search", app_config)
+        self.app = app_config.get("app", app_config)
     
     def get(self, key, default=None):
         return getattr(self, key, default)

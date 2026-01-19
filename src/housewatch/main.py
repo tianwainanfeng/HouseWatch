@@ -39,15 +39,18 @@ def main():
         # Load configuration
         config = ProjectConfig()
         logger.info("✓ Configuration loaded")
+        #print("config:\n", vars(config))
 
         # Initialize components
         seen_path = root_dir / "data" / "seen_houses.json"
         matched_path = root_dir / "data" / "matched_houses.json"
+        #logger.info(f"\n\tSeen path: {seen_path}")
+        #logger.info(f"\n\tMatched path: {matched_path}")
 
-        scraper = RedfinScraper(config.get("search", {}))
+        scraper = RedfinScraper(config)
         storage = HouseStorage(str(seen_path), str(matched_path))
         notifier = EmailNotifier(config.email)
-
+            
         # Fech from Redfin
         all_houses = scraper.fetch()
 
@@ -59,6 +62,8 @@ def main():
             logger.info("No new houses since last check.")
             return
 
+        """
+        # This part is not needed as the filtration is applied in redfin_scraper (fast!).
         # Apply criteria
         matched_houses = filter_houses(new_listings, config)
         logger.info(f"✓ {len(matched_houses)} houses match all criteria")
@@ -74,6 +79,16 @@ def main():
                 logger.info("Failed to send email notification")
         else:
             logger.info("No matches found among new listings")
+        """
+        
+        logger.info(f"Found {len(new_listings)} NEW matches!")
+        storage.save_matched(new_listings)
+
+        # Send notification
+        if notifier.send_notification(new_listings):
+            logger.info("Email notification sent")
+        else:
+            logger.info("Failed to send email notification")
 
         # Mark all processed listings as 'seen'
         storage.make_multiple_as_seen(new_listings)

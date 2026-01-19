@@ -74,7 +74,7 @@ class HouseStorage:
         for house in houses:
             house_dict = {
                 "listing_id": house.listing_id,
-                "address": house.address,
+                "address": f"{house.address}, {house.city}, {house.state} {house.zip_code}",
                 "price": house.price,
                 "year_built": house.year_built,
                 "schools": house.schools,

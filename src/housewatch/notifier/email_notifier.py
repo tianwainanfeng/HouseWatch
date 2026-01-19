@@ -68,14 +68,27 @@ class EmailNotifier:
 
         # count from 1 instead of 0
         for i, house in enumerate(houses, 1):
+
+            if house.schools:
+                school_html = []
+                for level in ["elementary", "middle", "high"]:
+                    names = house.schools.get(level, [])
+                    if names:
+                        school_html.append(f"{level.capitalize()}: {', '.join(names)}")
+                    else:
+                        school_html.append(f"{level.capitalize()}: N/A")
+                school_html_str = "<br>".join(school_html)
+            else:
+                school_html_str = "N/A"
+
             html += f"""
             <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 8px;">
-                <h3 styl"margin-top: 0; color: #e67e22">#{i}: {house.address}</h3>
+                <h3 styl"margin-top: 0; color: #e67e22">#{i}: {house.address}, {house.city}, {house.state} {house.zip_code}</h3>
                 <table style="width: 100%; border-collapse: collapse;">
                     <tr><td style="width: 120px;"><strong>Price:</strong></td><td>{house.formatted_price}</td></tr>
                     <tr><td><strong>Year Built:</strong></td><td>{house.year_built or 'N/A'}</td></tr>
                     <tr><td><strong>Type:</strong></td><td>{house.property_type}</td></tr>
-                    <tr><td><strong>Schools:</strong></td><td>{', '.join(house.schools) if house.schools else 'N/A'}</td></tr>
+                    <tr><td><strong>Schools:</strong></td><td>{school_html_str}</td></tr>
                 </table>
                 <p style="margin-top: 15px;">
                     <a href="{house.url}" style="background-color: #3498db; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">View on Redfin</a>
