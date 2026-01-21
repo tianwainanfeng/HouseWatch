@@ -48,6 +48,28 @@ Environment variables can be referenced in YAML using `${VAR_NAME}` and are load
 
 ---
 
+## Running HouseWatch with Docker
+
+### Build the Docker image
+```bash
+docker build -t housewatch .
+```
+
+### Run HouseWatch container
+```bash
+docker run --rm \
+  --env-file $(pwd)/.env \
+  -v $(pwd)/data:/app/data \
+  housewatch
+```
+
+# Notes:
+# - --rm: remove container after it stops
+# - ./data: local folder to store matched_houses.json and seen_houses.json
+# - .env: store your email credentials
+
+---
+
 ## Data Directory
 
 The `data/` directory stores runtime outputs (e.g. seen or matched houses).
