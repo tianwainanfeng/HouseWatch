@@ -5,3 +5,5 @@ data/*
 configs/*.local.yaml
 *.pyc
 *.swp
+.last_run_date
+run_housewatch.sh
